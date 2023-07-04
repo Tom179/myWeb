@@ -1,0 +1,100 @@
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Regist</title>
+
+</head>
+<body>
+<div class="container">
+  <h2>注册</h2>
+  <form action="/regist" method="POST">
+    <div>
+      <label for="password">Email:</label>
+      <input type="password" id="email" name="password" required>
+    </div>
+    <div>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+    </div>
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+
+
+    <div>
+      <input type="submit" value="注册">
+    </div>
+  </form>
+</div>
+</body>
+</html>
+//required为必填字段
+<link rel="stylesheet" href="style.css">-->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Registration Form</title>
+</head>
+<body>
+<h2>注册</h2>
+
+<form id="registration-form">
+  <label for="email">Email:</label>
+  <input type="text" id="email" name="email" required><br>
+
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username" required><br>
+
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required><br>
+
+  <button type="submit">注册</button>
+</form>
+
+<script>
+  // 获取表单元素
+  const form = document.getElementById('registration-form');
+
+  // 监听表单提交事件
+  form.addEventListener('submit', function(event) {
+    event.preventDefault(); // 阻止表单的默认提交行为
+
+    // 获取表单中的输入字段值
+    const email = document.getElementById('email').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // 创建 JSON 对象
+    const formData = {
+      email: email,
+      username: username,
+      password: password
+    };
+
+    // 发起异步请求，将 JSON 数据发送给后端
+    fetch('/regist', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+            .then(response => response.json())
+            .then(data => {
+              // 处理返回的数据
+              console.log(data);
+              // 其他操作...
+            })
+            .catch(error => {
+              // 处理请求错误
+              console.error('请求出错:', error);
+            });
+  });
+</script>
+</body>
+</html>
