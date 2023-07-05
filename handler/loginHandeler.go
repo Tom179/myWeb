@@ -6,13 +6,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"goweb02/Database/mysql"
 	"goweb02/Database/mysql/models"
-	"goweb02/ResAndReq"
 	"net/http"
 )
 
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 func Login(c *gin.Context) { //email、password
 	mysql.Connect()
-	loginRequest := ResAndReq.LoginRequest{}
+	loginRequest := LoginRequest{}
 	if err := c.ShouldBindJSON(&loginRequest); err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 			"message": "请求解析错误，请求参数获取失败，请确认请求格式是否正确。上传文件请使用 multipart 标头，参数请使用 JSON 格式。",

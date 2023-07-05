@@ -4,14 +4,19 @@ import (
 	"github.com/gin-gonic/gin"
 	"goweb02/Database/mysql"
 	"goweb02/Database/mysql/models"
-	"goweb02/ResAndReq"
 	"net/http"
 	"time"
 )
 
+type RegistRequest struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func Regist(c *gin.Context) {
 	mysql.Connect() //连接数据库
-	request := ResAndReq.RegistRequest{}
+	request := RegistRequest{}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
@@ -42,4 +47,5 @@ func Regist(c *gin.Context) {
 	}
 }
 
-//问题1；前端如何将请求数据发送给后端？html表单？还是全部携带在请求中
+// 问题1；前端如何将请求数据发送给后端？html表单？还是全部携带在请求中?
+// 前后端分离架构下，前端是可以把表单中的数据打包在请求中的，所以可以在请求惨始终获取

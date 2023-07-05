@@ -8,5 +8,5 @@ type BaseModel struct {
 }
 type TimeRecord struct {
 	CreateTime time.Time `gorm:"column:createTime;" `
-	UpdateTime time.Time `gorm:"column:upDateTime;" `
+	UpDateTime time.Time `gorm:"column:upDateTime;" `
 }
