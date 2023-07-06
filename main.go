@@ -29,5 +29,5 @@ func setUpRoutes(r *gin.Engine) {
 	r.POST("/login", handler.Login)
 	//注册登录（没有jwt，之后完善）
 	r.POST("/createImageCaptcha", handler.SendImage)
-
+	r.POST("/sendEmailCaptcha", handler.SendEmail)
 }
