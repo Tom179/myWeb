@@ -7,15 +7,14 @@ import (
 )
 
 var RDB *redis.Client
-var ctx context.Context
+var ctx = context.Background()
 
-func Connect() {
+func Connect() { //连接并初始化ctx
 	RDB = redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "",
-		DB:       0,
+		DB:       0, //最大连接数？？？暂未考虑
 	})
-	ctx = context.Background()
 }
 
 func Create(key, value string) {
@@ -29,7 +28,7 @@ func Create(key, value string) {
 }
 
 func Delete(key string) {
-	_, err := RDB.Del(ctx, key).Result()
+	_, err := RDB.Del(ctx, key).Result() //返回删除键的数量
 	if err != nil {
 		fmt.Println("删除键出错:", err)
 		return

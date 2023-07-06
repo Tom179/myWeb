@@ -22,7 +22,10 @@ func SendEmail(c *gin.Context) {
 	c.ShouldBindJSON(&req)
 	//验证图片验证码
 	driver := base64Captcha.NewDriverDigit(80, 240, 4, 0.7, 80)
-	captcha := base64Captcha.NewCaptcha(driver, base64Captcha.DefaultMemStore)
+	redis.Connect()
+	store := redis.RedisStore{}
+	captcha := base64Captcha.NewCaptcha(driver, &store)
+
 	if !captcha.Verify(req.CaptchaID, req.CaptchaTry, true) { //第三个参数，设定验证码是否未一次性的，如果为true，验证一次就作废验证码(不管是否对错)
 		c.JSON(400, gin.H{
 			"msg":    "图片验证码不正确",
@@ -41,7 +44,7 @@ func SendEmail(c *gin.Context) {
 	redis.Create(req.Email, verifyCode)
 	c.JSON(200, gin.H{
 		"message": "验证码发送成功",
-		"验证码":     verifyCode,
+		"验证码":  verifyCode,
 	})
 }
 
