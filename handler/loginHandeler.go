@@ -6,6 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"goweb02/Database/mysql"
 	"goweb02/Database/mysql/models"
+	"goweb02/jwt"
 	"net/http"
 )
 
@@ -31,7 +32,9 @@ func Login(c *gin.Context) { //email、password
 			"error":   err.Error(), //自定义的错误类型，要加上.Error() 因为自定义的类型无法成功完成json转换
 		})
 	} else {
+		jwt := jwt.GetJWT().CreateToken(*user) //登录成功后生成jwt
 		c.JSON(200, gin.H{
+			"token":     jwt,
 			"message":   "登录成功",
 			"loginUser": user,
 		})

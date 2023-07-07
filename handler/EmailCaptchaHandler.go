@@ -22,6 +22,7 @@ func SendEmail(c *gin.Context) {
 	c.ShouldBindJSON(&req)
 	//验证图片验证码
 	driver := base64Captcha.NewDriverDigit(80, 240, 4, 0.7, 80)
+
 	redis.Connect()
 	store := redis.RedisStore{}
 	captcha := base64Captcha.NewCaptcha(driver, &store)

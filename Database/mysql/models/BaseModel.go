@@ -4,7 +4,7 @@ package models
 import "time"
 
 type BaseModel struct {
-	ID uint64 `gorm:"column:id;primaryKey;autoIncrement;" ` //自增必须要是主键
+	ID int `gorm:"column:id;primaryKey;autoIncrement;" ` //自增必须要是主键，，，，原始为uint64
 }
 type TimeRecord struct {
 	CreateTime time.Time `gorm:"column:createTime;" `
