@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"goweb02/Database/mysql/models"
+	"goweb02/Database/mysql"
 	"time"
 )
 
@@ -32,7 +32,7 @@ func GetJWT() *JWT { //第一次调用生成新的jwt，后面就用这个jwt
 	return InterNalJwt
 }
 
-func (this *JWT) CreateToken(user models.User) string {
+func (this *JWT) CreateToken(user mysql.User) string {
 
 	claims := MyClaims{
 		ID:       user.ID,

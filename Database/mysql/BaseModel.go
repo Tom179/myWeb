@@ -1,9 +1,9 @@
-package models
+package mysql
 
 //用于存放表中的公共基础字段，比如自增id和
 import "time"
 
-type BaseModel struct {
+type IdRecord struct {
 	ID int `gorm:"column:id;primaryKey;autoIncrement;" ` //自增必须要是主键，，，，原始为uint64
 }
 type TimeRecord struct {

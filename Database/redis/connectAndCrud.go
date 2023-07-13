@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"time"
 )
 
 var RDB *redis.Client
@@ -17,11 +18,11 @@ func Connect() { //连接并初始化ctx
 	})
 }
 
-func Create(key, value string) {
+func Create(key, value string, time time.Duration) {
 	if RDB == nil {
 		Connect() //每次请求该接口都要连接和关闭，是否不合理？
 	}
-	if err := RDB.Set(ctx, key, value, 0).Err(); err != nil { //第三个参数设置过期时间
+	if err := RDB.Set(ctx, key, value, time).Err(); err != nil { //第三个参数设置过期时间
 		fmt.Println(err)
 		return
 	}

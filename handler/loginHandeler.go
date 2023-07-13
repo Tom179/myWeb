@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"goweb02/Database/mysql"
-	"goweb02/Database/mysql/models"
 	"goweb02/jwt"
 	"net/http"
 )
@@ -41,7 +40,7 @@ func Login(c *gin.Context) { //email、password
 	}
 }
 
-func checkUser(email, password string) (*models.User, error) {
+func checkUser(email, password string) (*mysql.User, error) {
 	user, err := mysql.GetUserByEmail(email)
 	if err != nil {
 		return nil, errors.New("邮件不存在")

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"goweb02/Database/mysql"
-	"goweb02/Database/mysql/models"
 	"goweb02/Database/redis"
 	"net/http"
 	"time"
@@ -37,13 +36,13 @@ func Regist(c *gin.Context) {
 	}
 	//email, username, password := c.PostForm("email"), c.PostForm("username"), c.PostForm("password")
 	//👆传统表单提交方式，我们这里用json请求参数方式
-	if !mysql.Existed("username", req.Username) && !mysql.Existed("email", req.Email) {
+	if !mysql.Existed(mysql.User{}, "username", req.Username) /*&& !mysql.Existed("email", req.Email) */ {
 		//fmt.Println("用户名和邮箱都没有使用过")
-		userModel := models.User{
+		userModel := mysql.User{
 			Email:      req.Email,
 			Username:   req.Username,
 			Password:   req.Password, //加密存储
-			TimeRecord: models.TimeRecord{CreateTime: time.Now()},
+			TimeRecord: mysql.TimeRecord{CreateTime: time.Now()},
 		}
 		mysql.CreateUser(&userModel)
 		c.JSON(200, gin.H{
@@ -72,6 +71,6 @@ func verifyCaptcha(req RegistRequest) error {
 		return errors.New("邮件验证码错误")
 	}
 
-	redis.Delete(req.Email)
+	//redis.Delete(req.Email)//👈验证完后应该删除
 	return nil
 }

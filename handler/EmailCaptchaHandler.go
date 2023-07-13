@@ -27,7 +27,8 @@ func SendEmail(c *gin.Context) {
 	store := redis.RedisStore{}
 	captcha := base64Captcha.NewCaptcha(driver, &store)
 
-	if !captcha.Verify(req.CaptchaID, req.CaptchaTry, true) { //第三个参数，设定验证码是否未一次性的，如果为true，验证一次就作废验证码(不管是否对错)
+	//↓第三个参数填true，保证redis中的存储是一次性的，验证了就失效
+	if !captcha.Verify(req.CaptchaID, req.CaptchaTry, false) { //第三个参数，设定验证码是否未一次性的，如果为true，验证一次就作废验证码(不管是否对错)
 		c.JSON(400, gin.H{
 			"msg":    "图片验证码不正确",
 			"id":     req.CaptchaID,
@@ -35,17 +36,17 @@ func SendEmail(c *gin.Context) {
 		})
 		return
 	}
-	//发送邮件验证码
 
+	//发送邮件验证码
 	verifyCode := RandomVerifyCode()
 	if !Send("1537946665@qq.com", req.Email, "验证码", verifyCode) {
 		fmt.Println("验证码发送失败")
 		return
 	}
-	redis.Create(req.Email, verifyCode)
+	redis.Create(req.Email, verifyCode, 0)
 	c.JSON(200, gin.H{
 		"message": "验证码发送成功",
-		"验证码":  verifyCode,
+		"验证码":     verifyCode,
 	})
 }
 

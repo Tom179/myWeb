@@ -7,7 +7,7 @@ import (
 type RedisStore struct { //用于实现Base64Captcha库的接口，相当于自己写了redis操作，不过封装在这个redisStore中
 }
 
-func (rs *RedisStore) Set(id string, value string) error {
+func (rs *RedisStore) Set(id string, value string) error { //过期时间为一分钟噢
 	err := RDB.Set(ctx, id, value, 0).Err()
 	if err != nil {
 		fmt.Println(err)
