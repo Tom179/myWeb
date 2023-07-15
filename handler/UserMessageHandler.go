@@ -8,7 +8,7 @@ import (
 
 type ShowRequest struct {
 	Num  int `json:"num"`
-	Page int `json:"page"`
+	Page int `json:"page"` //第几页
 }
 
 func ShowUsers(c *gin.Context) {

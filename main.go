@@ -38,14 +38,20 @@ func setUpRoutes(r *gin.Engine) {
 	r.POST("/createImageCaptcha", handler.SendImage)
 	r.POST("/sendEmailCaptcha", handler.SendEmail)
 	r.POST("/testAuth", jwt.ParseJWTMiddleWare(), nextMethod)
-	r.POST("/getUsers", handler.ShowUsers) //获取用户列表接口
+	r.POST("/getUsers", handler.ShowUsers) //获取用户列表接口：查询第几页，还有bug：未计算总共有几页
 	//r.POST("/testINI", getIni)
 
 	r1 := r.Group("/topics") //话题增删查改
 	r1.POST("/add", handler.AddTopic)
-	r1.POST("/delete/:id", handler.DeleteTopic)
-	r1.POST("/search")
-	r1.POST("/update")
+	r1.DELETE("/delete/:id", handler.DeleteTopic)
+	r11 := r1.Group("/get")
+	{
+		r11.GET("/one/:id", handler.GetOneTopic)
+		r11.GET("/all", handler.GetAllTopics) //前端传入每页需要多少
+		r11.GET("/all/MovePage/:dir", handler.MovePage)
+		r11.GET("/page/:CertainPage", handler.GetCertainPage)
+	}
+	r1.PUT("/modify", handler.ModifyTopic) //传入id和修改内容
 
 }
 
