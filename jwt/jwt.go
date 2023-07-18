@@ -5,6 +5,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"goweb02/Database/mysql"
+	"goweb02/Database/redis"
+	"goweb02/config"
 	"time"
 )
 
@@ -25,8 +27,8 @@ type MyClaims struct { //载荷要携带哪些信息？我这里把非敏感信�
 
 func GetJWT() *JWT { //第一次调用生成新的jwt，后面就用这个jwt
 	if InterNalJwt == nil {
-		fmt.Println("jwt实例为空")
-		return &JWT{[]byte("secretKey"), 60}
+		fmt.Println("jwt实例为空,新建对象")
+		return &JWT{[]byte(config.JWTsecretKey), config.JWTexpireTime}
 	}
 	fmt.Println("jwt已经被实例化")
 	return InterNalJwt
@@ -62,13 +64,22 @@ func expireAtTime(minute int64) int64 {
 	return timenow.Add(expire).Unix()
 }
 
-func (this *JWT) parseToken(c *gin.Context) { //中间件函数
-	tokenString := c.GetHeader("Autorization")
+func (this *JWT) parseToken(c *gin.Context) { //中间件函数，？？？？1.检验jwt登出黑名单？？？，如果未登出： 2.解析jwt
+	tokenString := c.GetHeader("Authorization")
 	if tokenString == "" {
 		c.AbortWithStatusJSON(400, gin.H{
 			"error": "token为空",
 		}) //不再执行后面的接口函数
 		return
+	}
+
+	exists, err := redis.RDB.Exists(redis.CTX, tokenString).Result()
+	if err != nil {
+		fmt.Println("查询失败")
+	}
+	if exists == 1 { //存在该键
+		fmt.Println("jwt存在黑名单中，视作失效")
+		c.AbortWithStatusJSON(200, "token已经登出")
 	}
 
 	token, err := jwt.ParseWithClaims(tokenString, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
@@ -82,7 +93,8 @@ func (this *JWT) parseToken(c *gin.Context) { //中间件函数
 		return
 	}
 	fmt.Println(token.Claims) //token.Claims就是解析出的载荷
-	c.JSON(200, token.Claims)
+	c.Set("claims", token.Claims)
+	//c.JSON(200, token.Claims)
 	c.Next()
 }
 

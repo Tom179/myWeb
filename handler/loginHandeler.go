@@ -5,8 +5,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"goweb02/Database/mysql"
+	"goweb02/Database/redis"
 	"goweb02/jwt"
 	"net/http"
+	"time"
 )
 
 type LoginRequest struct {
@@ -50,4 +52,19 @@ func checkUser(email, password string) (*mysql.User, error) {
 	}
 
 	return &user, nil
+}
+
+func Logout(c *gin.Context) {
+	jwtString := c.GetHeader("Authorization") //获取jwt
+
+	var myClaims *jwt.MyClaims
+	claims, _ := c.Get("claims") //在上下文c中获取claims
+	myClaims = claims.(*jwt.MyClaims)
+	expireAt := myClaims.ExpiresAt
+	timeLeft := time.Unix(expireAt, 0).Sub(time.Now()) //jwt剩余有效时间的格式化
+
+	redis.Create("logout:"+jwtString, "", timeLeft) //将jwt添加进登出黑名单
+	c.JSON(200, gin.H{
+		"msg": "登出",
+	})
 }

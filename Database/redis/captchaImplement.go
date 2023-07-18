@@ -8,7 +8,7 @@ type RedisStore struct { //用于实现Base64Captcha库的接口，相当于自�
 }
 
 func (rs *RedisStore) Set(id string, value string) error { //过期时间为一分钟噢
-	err := RDB.Set(ctx, id, value, 0).Err()
+	err := RDB.Set(CTX, id, value, 0).Err()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -17,13 +17,13 @@ func (rs *RedisStore) Set(id string, value string) error { //过期时间为一�
 }
 
 func (rs *RedisStore) Get(id string, clear bool) string {
-	value, err := RDB.Get(ctx, id).Result()
+	value, err := RDB.Get(CTX, id).Result()
 	if err != nil {
 		fmt.Println("获取验证码失败")
 		// 处理错误
 	}
 	if clear { //如果true，表示用完就删，即验证码为一次性的
-		err := RDB.Del(ctx, id).Err()
+		err := RDB.Del(CTX, id).Err()
 		if err != nil {
 			fmt.Println("验证码删除失败")
 		}

@@ -5,6 +5,10 @@ import (
 	"gopkg.in/ini.v1"
 )
 
+var ServerPort string
+var JWTsecretKey string
+var JWTexpireTime int64
+
 func init() { //一个项目可以有多个init函数，在执行main函数之前顺序执行
 
 	file, err := ini.Load("config/config.ini")
@@ -16,9 +20,10 @@ func init() { //一个项目可以有多个init函数，在执行main函数之�
 }
 
 func LoadData(file *ini.File) {
-	HttpPort := file.Section("server").Key("httpport").String()
-	for i := 0; i < 5; i++ {
-		fmt.Println("调试：", HttpPort)
-	}
+	ServerPort = file.Section("server").Key("httpport").String()
+	JWTsecretKey = file.Section("jwt").Key("secretkey").String()
+	JWTexpireTime, _ = file.Section("jwt").Key("expireTime").Int64()
+
+	fmt.Println("调试：", ServerPort)
 
 }

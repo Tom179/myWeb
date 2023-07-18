@@ -7,8 +7,10 @@ import (
 
 type Topic struct {
 	IdRecord
-	Name        string `gorm:""`
-	Description string
+	Name          string `gorm:"primaryKey"`
+	Description   string `gorm:"default:该话题暂无简介"`
+	CreatedByUser int    `gorm:"not null"` //创建人？？？？
+	Like          int    `gorm:""`         //点赞？？？？？
 	TimeRecord
 }
 

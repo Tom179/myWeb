@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"goweb02/Database/mysql"
 	"goweb02/Database/redis"
+	"goweb02/config"
 	_ "goweb02/config"
 	"goweb02/handler"
 	"goweb02/jwt"
@@ -16,32 +17,20 @@ func main() {
 	redis.Connect()
 	mysql.Connect()
 	setUpRoutes(r)
-	r.Run()
+	r.Run(config.ServerPort)
 }
 
 func setUpRoutes(r *gin.Engine) {
-	/*r.LoadHTMLGlob("./Pages/*")                     //加载html
-	    r.StaticFile("/style.css", "./Pages/style.css") //加载css
-
-		r.GET("/", func(c *gin.Context) {
-			c.JSON(200, "主页面")
-		})
-		r.GET("/login", func(c *gin.Context) {
-			c.HTML(200, "login.html", nil)
-		})
-		r.GET("/regist", func(c *gin.Context) {
-			c.HTML(200, "regist.html", nil)
-		})*/
-
 	r.POST("/regist", handler.Regist)
 	r.POST("/login", handler.Login)
+	r.GET("/logout", jwt.ParseJWTMiddleWare(), handler.Logout) //！！！登出,GET还是POST?
 	r.POST("/createImageCaptcha", handler.SendImage)
 	r.POST("/sendEmailCaptcha", handler.SendEmail)
 	r.POST("/testAuth", jwt.ParseJWTMiddleWare(), nextMethod)
 	r.POST("/getUsers", handler.ShowUsers) //获取用户列表接口：查询第几页，还有bug：未计算总共有几页
 	//r.POST("/testINI", getIni)
 
-	r1 := r.Group("/topics") //话题增删查改
+	r1 := r.Group("/topics", jwt.ParseJWTMiddleWare()) //话题增删查改
 	r1.POST("/add", handler.AddTopic)
 	r1.DELETE("/delete/:id", handler.DeleteTopic)
 	r11 := r1.Group("/get")

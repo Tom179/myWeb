@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"goweb02/Database/mysql"
+	jwt2 "goweb02/jwt"
 	"strconv"
+	"time"
 )
 
 type AddTopicRequest struct {
@@ -25,9 +27,15 @@ func AddTopic(c *gin.Context) {
 		return
 	}
 
+	var myClaims *jwt2.MyClaims
+	claims, _ := c.Get("claims") //在上下文c中获取claims
+	myClaims = claims.(*jwt2.MyClaims)
+
 	topic := mysql.Topic{
-		Name:        req.Name,
-		Description: req.Description,
+		Name:          req.Name,
+		Description:   req.Description,
+		TimeRecord:    mysql.TimeRecord{CreateTime: time.Now()}, //获取当前时间
+		CreatedByUser: myClaims.ID,
 	}
 	fmt.Println("该topic不存在，可以添加")
 	mysql.CreateTopic(&topic)

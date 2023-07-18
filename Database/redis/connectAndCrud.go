@@ -8,7 +8,7 @@ import (
 )
 
 var RDB *redis.Client
-var ctx = context.Background()
+var CTX = context.Background()
 
 func Connect() { //连接并初始化ctx
 	RDB = redis.NewClient(&redis.Options{
@@ -22,14 +22,14 @@ func Create(key, value string, time time.Duration) {
 	if RDB == nil {
 		Connect() //每次请求该接口都要连接和关闭，是否不合理？
 	}
-	if err := RDB.Set(ctx, key, value, time).Err(); err != nil { //第三个参数设置过期时间
+	if err := RDB.Set(CTX, key, value, time).Err(); err != nil { //第三个参数设置过期时间
 		fmt.Println(err)
 		return
 	}
 }
 
 func Delete(key string) {
-	_, err := RDB.Del(ctx, key).Result() //返回删除键的数量
+	_, err := RDB.Del(CTX, key).Result() //返回删除键的数量
 	if err != nil {
 		fmt.Println("删除键出错:", err)
 		return
