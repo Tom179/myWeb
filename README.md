@@ -1,2 +1,3 @@
-# myWeb
-### gin+gorm+mysql简单实现注册登录
+# 传统javaEE实现图书管理
+jdbc+thymleaf
+
